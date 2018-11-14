@@ -1,0 +1,119 @@
+apiVersion: mcm.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  name: details
+  labels:
+    name: details
+    hcmapp: mcmappdemo
+    servicekind: ApplicationService
+    placementpolicy: bookinfo
+spec:
+  deployer:
+    kind: helm
+    helm:
+      chartURL: https://raw.githubusercontent.com/ycao/bookinfo/master/charts/details-mcm-0.1.5.tgz
+      namespace: default
+
+---
+
+apiVersion: mcm.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  name: ratings
+  labels:
+    name: ratings
+    hcmapp: mcmappdemo
+    servicekind: ApplicationService
+    placementpolicy: bookinfo
+spec:
+  deployer:
+    kind: helm
+    helm:
+      chartURL: https://raw.githubusercontent.com/ycao/bookinfo/master/charts/ratings-mcm-0.1.5.tgz
+      namespace: default
+
+---
+
+apiVersion: mcm.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  name: reviews
+  labels:
+    name: reviews
+    hcmapp: mcmappdemo
+    servicekind: ApplicationService
+    placementpolicy: bookinfo
+spec:
+  deployer:
+    kind: helm
+    helm:
+      chartURL: https://raw.githubusercontent.com/ycao/bookinfo/master/charts/reviews-mcm-0.1.5.tgz
+      namespace: default
+  dependencies:
+  - destination:
+      name: ratings
+      kind: Deployable
+    type: usesCreated
+
+---
+
+apiVersion: mcm.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  name: bookinfo
+  labels:
+    name: bookinfo
+    hcmapp: mcmappdemo
+    servicekind: ApplicationService
+    placementpolicy: bookinfo
+spec:
+  deployer:
+    kind: helm
+    helm:
+      chartURL: https://raw.githubusercontent.com/ycao/bookinfo/master/charts/productpage-mcm-0.1.5.tgz
+      namespace: default
+  dependencies:
+  - destination:
+      name: details
+      kind: Deployable
+    type: usesCreated
+  - destination:
+      name: reviews
+      kind: Deployable
+    type: usesCreated
+    
+---
+
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementPolicy
+metadata:
+  name: bookinfo
+  labels:
+    name: bookinfo
+    hcmapp: mcmappdemo
+spec:
+  replicas: 1
+  clusterSelector:
+    matchLabels:
+      environment: Dev
+      
+---
+
+apiVersion: mcm.ibm.com/v1alpha1
+kind: Application
+metadata:
+  name: bookinfo
+  labels:
+    app: bookinfo
+    hcmapp: mcmappdemo
+spec:
+  selector:
+    matchLabels:
+      hcmapp: mcmappdemo
+  componentKinds:
+  - group: core
+    kind: Service
+  - group: apps
+    kind: Deployment
+
+
