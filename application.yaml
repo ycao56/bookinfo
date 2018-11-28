@@ -92,10 +92,10 @@ metadata:
     name: bookinfo
     hcmapp: mcmappdemo
 spec:
-  replicas: 1
-  clusterSelector:
+  clusterLabels:
     matchLabels:
       environment: Dev
+  clusterReplicas: 1
       
 ---
 
