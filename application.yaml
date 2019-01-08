@@ -6,7 +6,6 @@ metadata:
     name: details
     hcmapp: mcmappdemo
     servicekind: ApplicationService
-    placementpolicy: bookinfo
 spec:
   deployer:
     kind: helm
@@ -24,7 +23,6 @@ metadata:
     name: ratings
     hcmapp: mcmappdemo
     servicekind: ApplicationService
-    placementpolicy: bookinfo
 spec:
   deployer:
     kind: helm
@@ -42,7 +40,6 @@ metadata:
     name: reviews
     hcmapp: mcmappdemo
     servicekind: ApplicationService
-    placementpolicy: bookinfo
 spec:
   deployer:
     kind: helm
@@ -85,6 +82,34 @@ spec:
 ---
 
 apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementBinding
+metadata:
+  name: bookinfo
+  labels:
+    name: bookinfo
+    hcmapp: mcmappdemo
+placementRef:
+  apiGroup: mcm.ibm.com
+  kind: PlacementPolicy
+  name: bookinfo
+subjects:
+- apiGroup: mcm.ibm.com
+  kind: Deployable
+  name: bookinfo
+- apiGroup: mcm.ibm.com
+  kind: Deployable
+  name: ratings
+- apiGroup: mcm.ibm.com
+  kind: Deployable
+  name: reviews
+- apiGroup: mcm.ibm.com
+  kind: Deployable
+  name: details
+
+
+---
+
+apiVersion: mcm.ibm.com/v1alpha1
 kind: PlacementPolicy
 metadata:
   name: bookinfo
@@ -99,7 +124,7 @@ spec:
       
 ---
 
-apiVersion: mcm.ibm.com/v1alpha1
+apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
   name: bookinfo
@@ -116,4 +141,69 @@ spec:
   - group: apps
     kind: Deployment
 
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: ApplicationRelationship
+metadata:
+  name: bookinfo
+  labels:
+    app: bookinfo
+    hcmapp: mcmappdemo
+spec:
+  destination:
+    kind: Deployable
+    name: bookinfo
+  source:
+    kind: Application
+    name: bookinfo
+  type: contains
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: ApplicationRelationship
+metadata:
+  name: details
+  labels:
+    app: bookinfo
+    hcmapp: mcmappdemo
+spec:
+  destination:
+    kind: Deployable
+    name: details
+  source:
+    kind: Application
+    name: bookinfo
+  type: contains
 
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: ApplicationRelationship
+metadata:
+  name: ratings
+  labels:
+    app: bookinfo
+    hcmapp: mcmappdemo
+spec:
+  destination:
+    kind: Deployable
+    name: ratings
+  source:
+    kind: Application
+    name: bookinfo
+  type: contains
+
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: ApplicationRelationship
+metadata:
+  name: reviews
+  labels:
+    app: bookinfo
+    hcmapp: mcmappdemo
+spec:
+  destination:
+    kind: Deployable
+    name: reviews
+  source:
+    kind: Application
+    name: bookinfo
+  type: usesCreated
