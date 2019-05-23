@@ -120,6 +120,7 @@ spec:
   clusterLabels:
     matchLabels:
       environment: Dev
+      vendor: ICP
   clusterReplicas: 1
       
 ---
